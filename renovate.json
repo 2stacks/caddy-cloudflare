@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Caddy base images, the caddy-dns/cloudflare plugin and the workflow's actions. Merging a PR rebuilds and pushes ghcr.io/2stacks/caddy-cloudflare; the stacks that use it get their digest PRs in their own repo. Validate every PR before merging: stable releases only, read the release notes, the PR build must pass.",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "timezone": "America/New_York",
+  "schedule": [
+    "before 6am on saturday"
+  ],
+  "packageRules": [
+    {
+      "description": "Base images carry digests; digest PRs bring base-OS fixes",
+      "matchDatasources": [
+        "docker"
+      ],
+      "pinDigests": true
+    },
+    {
+      "description": "Builder and runtime base and the DNS plugin move together, so the image is rebuilt once",
+      "matchPackageNames": [
+        "caddy",
+        "github.com/caddy-dns/cloudflare"
+      ],
+      "groupName": "caddy"
+    },
+    {
+      "description": "Major version bumps need a tick on the Dependency Dashboard first",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    }
+  ],
+  "customManagers": [
+    {
+      "description": "caddy-dns/cloudflare plugin version in the Dockerfile",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "xcaddy build --with github\\.com/caddy-dns/cloudflare@(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "github.com/caddy-dns/cloudflare",
+      "datasourceTemplate": "go"
+    }
+  ]
+}
