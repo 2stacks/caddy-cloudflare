@@ -25,6 +25,9 @@ without AVX2.
 
 ## Verify the signature
 
+Needs cosign v3 or newer (the signature is stored in the Sigstore bundle
+format; cosign v2 reports "no signatures found").
+
 ```sh
 cosign verify ghcr.io/2stacks/caddy-cloudflare@sha256:<digest> \
   --certificate-identity-regexp '^https://github.com/2stacks/caddy-cloudflare/\.github/workflows/build\.yml@refs/heads/main$' \
