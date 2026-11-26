@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "Caddy base images, the caddy-dns/cloudflare plugin and the workflow's actions. Merging a PR rebuilds and pushes ghcr.io/2stacks/caddy-cloudflare; the stacks that use it get their digest PRs in their own repo. Validate every PR before merging: stable releases only, read the release notes, the PR build must pass.",
+  "description": "Caddy base images, the caddy-dns/cloudflare plugin and the workflow's actions. Merging a PR rebuilds and pushes ghcr.io/2stacks/caddy-cloudflare; the stacks that use it get their digest PRs in their own repo. Validate every PR before merging: stable releases only, read the release notes, the PR build must pass. Every PR requests a review from 2stacks, which is how the owner gets mail (Dashboard edits send none); majors come as PRs too, with a warning in the body.",
   "extends": [
     "config:recommended",
     ":dependencyDashboard",
@@ -9,6 +9,9 @@
   "timezone": "America/New_York",
   "schedule": [
     "before 6am on saturday"
+  ],
+  "reviewers": [
+    "2stacks"
   ],
   "packageRules": [
     {
@@ -27,11 +30,13 @@
       "groupName": "caddy"
     },
     {
-      "description": "Major version bumps need a tick on the Dependency Dashboard first",
+      "description": "Major version bumps: a PR like any other (a review request mails the owner), with a warning in the body",
       "matchUpdateTypes": [
         "major"
       ],
-      "dependencyDashboardApproval": true
+      "prBodyNotes": [
+        "**Major version:** read the upgrade guide and every breaking change before merging; the build must pass and the image must still serve the 8 Caddy stacks in homelab-admin. Don't want it? Close the PR: Renovate skips this major until a newer one appears."
+      ]
     }
   ],
   "customManagers": [
